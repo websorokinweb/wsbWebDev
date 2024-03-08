@@ -1,0 +1,137 @@
+<!-- Dodaj walidację formularza:
+Sprawdź, czy pole “Imię” zawiera tylko litery i ma co najmniej 3 znaki.
+Upewnij się, że pole “Email” zawiera prawidłowy adres email.
+Wymagaj, aby pole “Wiadomość” miało co najmniej 20 znaków.
+Sprawdź, czy wybrano jedną z opcji płci.
+Sprawdź, czy zaznaczono przynajmniej jedno hobby.
+Wyświetl komunikat błędu:
+Jeśli walidacja nie przejdzie, wyświetl odpowiedni komunikat błędu obok każdego pola, które wymaga poprawy.
+Dodaj funkcję czyszczenia formularza:
+Utwórz przycisk “Wyczyść”, który zresetuje wszystkie pola formularza do stanu początkowego.
+Zaimplementuj wyświetlanie danych w czasie rzeczywistym:
+Dodaj funkcję, która będzie wyświetlać wprowadzone dane w czasie rzeczywistym pod formularzem, umożliwiając użytkownikowi podgląd wprowadzanych informacji.
+Dodaj walidację po stronie serwera:
+Po naciśnięciu przycisku “Wyślij”, dane powinny być również walidowane po stronie serwera w pliku sendData.php.
+Ulepsz wygląd formularza:
+Dodaj style CSS, aby poprawić estetykę formularza, np. animacje przy zaznaczaniu pól, efekty hover dla przycisków itp.
+Dodaj zapisywanie danych do pliku:
+Po walidacji danych po stronie klienta, zapisz dane do pliku JSON lub CSV na serwerze.
+Implementacja reakcji na zmianę koloru:
+Dodaj funkcję JavaScript, która zmieni kolor tła formularza na wybrany przez użytkownika kolor.
+Walidacja za pomocą wyrażeń regularnych:
+Użyj wyrażeń regularnych do bardziej zaawansowanej walidacji pól tekstowych.
+Dodaj funkcję przesyłania plików:
+Umożliw po dodanie do formularza opcji przesyłania plików, np. zdjęcia profilowego. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./form.css">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Formularz kontaktowy</h1>
+    <div id="error-box">
+
+    </div>    
+    <form id="data" action="./sendData.php" method="post" onsubmit="return submitForm()">
+        <label for="name">Imię</label>
+        <input type="text" name="name" id="nameInput" autofocus>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="emailInput">
+        <label for="message">Wiadomość</label>
+        <textarea name="message" id="messageInput" cols="50" rows="4"></textarea>
+
+        <label class="beige">Płeć:</label><br>
+        <label for="male">Mężczyzna</label>
+        <input type="radio" name="genderInput" id="male" value="Mężczyzna">
+        <label for="female">Kobieta</label>
+        <input type="radio" name="genderInput" id="female" value="Kobieta">
+        <label for="other">Inna</label>
+        <input type="radio" name="genderInput" id="other" value="Inna">
+
+        <label class="beige">Hobby:</label><br>
+        <label for="reading">Czytanie</label>
+        <input type="checkbox" name="hobbiesInput" id="reading" value="Czytanie">
+        <label for="sports">Sport</label>
+        <input type="checkbox" name="hobbiesInput" id="sports" value="Sport">
+        <label for="music">Muzyka</label>
+        <input type="checkbox" name="hobbiesInput" id="music" value="Muzyka">
+
+        <label for="color">Ulubiony kolor:</label>
+        <input type="color" name="color" id="color">
+        <input type="submit" value="Wyślij">
+    </form>
+    <div id="result"></div>
+    <script>
+        function validateForm(){
+            let formErrorMessages = [];
+            
+            let nameInput = document.querySelector("#nameInput");
+            let nameInputValue = nameInput.value;
+
+            let emailInput = document.querySelector("#emailInput");
+            let emailInputValue = emailInput.value;            
+
+            let messageInput = document.querySelector("#messageInput");
+            let messageInputValue = messageInput.value;
+
+            let genderInput = document.querySelector('input[name="genderInput"]:checked');
+
+            let hobbiesInputs = document.querySelectorAll('input[name="hobbiesInput"]:checked');
+
+            if(!nameInputValue.match(/[a-zA-Z]{3,}$/)){
+                formErrorMessages.push("Imię powinno mieć co najmniej 3 znaki i zawierać tylko litery.");
+            }
+
+            if(!emailInputValue.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)){
+                formErrorMessages.push("Nieprawidłowy email.");
+            }
+
+            if(messageInputValue.length < 20) {
+                formErrorMessages.push("Wiadomość za krótka. Powinna zawierać co najmniej 20 znaki.")
+            }
+
+            if(!genderInput){
+                formErrorMessages.push("Proszę wybrać płęć.");
+            }
+
+            if(hobbiesInputs.length == 0) {
+                formErrorMessages.push("Proszę wybrać minimum 1 hobby.");
+            } 
+            
+
+            return formErrorMessages;
+        }
+
+        function resetErrors(formErrorsBox){
+            formErrorsBox.innerHTML = "";
+        }
+
+        function displayErrors(formErrorMessages, formErrorsBox){
+            let newErrorMessageParagraph;
+            for(let errorMessageIndex = 0; errorMessageIndex < formErrorMessages.length; errorMessageIndex++) {
+                newErrorMessageParagraph = document.createElement("p")
+                newErrorMessageParagraph.textContent = formErrorMessages[errorMessageIndex] 
+                formErrorsBox.appendChild(newErrorMessageParagraph);   
+            }
+        }
+
+        function submitForm(){
+            let formErrorMessages = validateForm()
+            let isFormValid = formErrorMessages.length <= 0
+            let formErrorsBox = document.querySelector("#error-box");
+
+            resetErrors(formErrorsBox);
+
+            if(!isFormValid){
+                displayErrors(formErrorMessages, formErrorsBox);
+            }
+
+            return isFormValid;
+        }
+    </script>
+</body>
+</html>
