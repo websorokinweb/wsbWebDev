@@ -48,7 +48,7 @@ input[type="color"] {
     background-color: beige;;
 }
 
-#result {
+.result {
     width: 50%;
     margin: 20px auto;
     border: 2px solid darkblue;
